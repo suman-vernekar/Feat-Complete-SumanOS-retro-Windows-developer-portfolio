@@ -46,8 +46,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
       <div className="flex-1 p-1 space-y-1 relative overflow-y-auto max-h-[85vh]">
         {/* User Profile Header */}
         <div className="win-inset p-2 bg-gradient-to-r from-blue-900 to-blue-700 text-white flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-full bg-amber-400 text-black flex items-center justify-center font-bold text-sm border border-white flex-shrink-0">
-            SV
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-white flex-shrink-0 bg-blue-950">
+            <img src="/suman.jpg" alt="Suman Vernekar" className="w-full h-full object-cover" />
           </div>
           <div className="truncate">
             <div className="font-bold text-xs truncate">{PERSONAL_INFO.name}</div>

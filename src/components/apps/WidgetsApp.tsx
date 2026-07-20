@@ -159,7 +159,7 @@ export const WidgetsApp: React.FC = () => {
               {ghUser?.avatar_url ? (
                 <img src={ghUser.avatar_url} alt="GitHub Avatar" className="w-full h-full object-cover" />
               ) : (
-                'SV'
+                <img src="/suman.jpg" alt="Suman Vernekar" className="w-full h-full object-cover" />
               )}
             </div>
             <div className="grid grid-cols-3 gap-4 font-mono text-xs flex-1">

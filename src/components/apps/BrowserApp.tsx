@@ -116,9 +116,9 @@ export const BrowserApp: React.FC = () => {
           {/* Rendered Web Content */}
           {isLinkedIn && (
             <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded border border-blue-200">
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-full bg-blue-800 text-white flex items-center justify-center font-bold text-2xl border-2 border-white shadow">
-                  SV
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow flex-shrink-0 bg-blue-900">
+                  <img src="/suman.jpg" alt="Suman Vernekar" className="w-full h-full object-cover" />
                 </div>
                 <div className="space-y-1">
                   <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300">{PERSONAL_INFO.name}</h3>

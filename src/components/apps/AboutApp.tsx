@@ -47,9 +47,9 @@ export const AboutApp: React.FC = () => {
       <div className="win-inset p-4 bg-white dark:bg-[#1e1e1e] min-h-[320px]">
         {activeTab === 'general' && (
           <div className="space-y-4">
-            <div className="flex gap-4 items-start border-b pb-4">
-              <div className="w-16 h-16 rounded-full bg-blue-700 text-white font-bold text-2xl flex items-center justify-center border-2 border-white shadow">
-                SV
+            <div className="flex gap-4 items-center border-b pb-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md flex-shrink-0 bg-blue-900">
+                <img src="/suman.jpg" alt="Suman Vernekar" className="w-full h-full object-cover" />
               </div>
               <div className="space-y-1">
                 <h2 className="text-lg font-bold text-blue-900 dark:text-blue-400">{PERSONAL_INFO.name}</h2>

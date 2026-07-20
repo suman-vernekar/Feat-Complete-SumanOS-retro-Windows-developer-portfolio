@@ -136,19 +136,28 @@ COMMUNICATION LANGUAGES
             className="p-6 md:p-10 max-w-4xl w-full shadow-2xl rounded border space-y-6 font-serif leading-relaxed text-xs md:text-sm select-text transition-colors duration-200"
           >
             {/* Resume Header */}
-            <div style={{ borderColor: isWhite ? '#000000' : '#475569' }} className="text-center border-b-2 pb-4 space-y-1">
-              <h1 style={{ color: paperText }} className="text-2xl md:text-3xl font-bold tracking-tight font-sans">
-                {PERSONAL_INFO.name}
-              </h1>
-              <div style={{ color: subText }} className="flex flex-wrap items-center justify-center gap-3 text-xs font-sans font-medium">
-                <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> {PERSONAL_INFO.phone}</span>
-                <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> {PERSONAL_INFO.email}</span>
-                <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" style={{ color: linkColor }} className="flex items-center gap-1 underline">
-                  <Globe className="w-3.5 h-3.5" /> github.com/suman-vernekar
-                </a>
-                <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: linkColor }} className="flex items-center gap-1 underline">
-                  <Globe className="w-3.5 h-3.5" /> linkedin.com/in/suman-vernekar
-                </a>
+            <div style={{ borderColor: isWhite ? '#000000' : '#475569' }} className="border-b-2 pb-4 space-y-2">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-center sm:text-left space-y-1">
+                  <h1 style={{ color: paperText }} className="text-2xl md:text-3xl font-bold tracking-tight font-sans">
+                    {PERSONAL_INFO.name}
+                  </h1>
+                  <div style={{ color: subText }} className="font-semibold text-xs md:text-sm font-sans">{PERSONAL_INFO.role}</div>
+                  <div style={{ color: subText }} className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs font-sans font-medium pt-1">
+                    <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> {PERSONAL_INFO.phone}</span>
+                    <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> {PERSONAL_INFO.email}</span>
+                    <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" style={{ color: linkColor }} className="flex items-center gap-1 underline">
+                      <Globe className="w-3.5 h-3.5" /> github.com/suman-vernekar
+                    </a>
+                    <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: linkColor }} className="flex items-center gap-1 underline">
+                      <Globe className="w-3.5 h-3.5" /> linkedin.com/in/suman-vernekar
+                    </a>
+                  </div>
+                </div>
+
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-blue-600 shadow-md flex-shrink-0 bg-slate-800">
+                  <img src="/suman.jpg" alt="Suman Vernekar" className="w-full h-full object-cover" />
+                </div>
               </div>
             </div>
 
