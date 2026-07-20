@@ -108,7 +108,6 @@ export const Desktop: React.FC<DesktopProps> = ({
     setTimeout(() => setIsRefreshing(false), 200);
   };
 
-  // Compute wallpaper styles
   const getWallpaperClass = () => {
     switch (wallpaper) {
       case 'xp_bliss':
@@ -147,8 +146,8 @@ export const Desktop: React.FC<DesktopProps> = ({
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
       )}
 
-      {/* Grid of Desktop Icons */}
-      <div className="relative z-10 p-4 grid grid-flow-col grid-rows-6 md:grid-rows-6 gap-2 w-max h-full">
+      {/* Grid of Desktop Icons: Auto-responsive for Mobile & Desktop */}
+      <div className="relative z-10 p-3 grid grid-cols-4 sm:grid-cols-5 md:grid-flow-col md:grid-rows-6 gap-2 w-full md:w-max max-h-full overflow-y-auto md:overflow-visible">
         {icons.map((icon) => (
           <DesktopIcon
             key={icon.id}

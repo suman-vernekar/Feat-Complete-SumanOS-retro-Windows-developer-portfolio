@@ -26,14 +26,25 @@ export const Window: React.FC<WindowProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   const dragStartRef = useRef<{ x: number; y: number; winX: number; winY: number }>({ x: 0, y: 0, winX: 0, winY: 0 });
   const resizeStartRef = useRef<{ x: number; y: number; w: number; h: number }>({ x: 0, y: 0, w: 0, h: 0 });
-
   const windowRef = useRef<HTMLDivElement>(null);
 
-  // Drag handling
+  // Check mobile screen viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Mouse Drag handling
   const handleTitleMouseDown = (e: React.MouseEvent) => {
-    if (win.isMaximized) return;
+    if (win.isMaximized || isMobile) return;
     onFocus();
     sound.playClick();
     setIsDragging(true);
@@ -45,9 +56,24 @@ export const Window: React.FC<WindowProps> = ({
     };
   };
 
+  // Touch Drag handling for Mobile
+  const handleTitleTouchStart = (e: React.TouchEvent) => {
+    if (win.isMaximized || isMobile) return;
+    onFocus();
+    sound.playClick();
+    const touch = e.touches[0];
+    setIsDragging(true);
+    dragStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      winX: win.position.x,
+      winY: win.position.y
+    };
+  };
+
   // Resize handling
   const handleResizeMouseDown = (e: React.MouseEvent) => {
-    if (win.isMaximized) return;
+    if (win.isMaximized || isMobile) return;
     e.stopPropagation();
     onFocus();
     setIsResizing(true);
@@ -61,7 +87,7 @@ export const Window: React.FC<WindowProps> = ({
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (isDragging) {
+      if (isDragging && !isMobile) {
         const deltaX = e.clientX - dragStartRef.current.x;
         const deltaY = e.clientY - dragStartRef.current.y;
         const newX = Math.max(0, dragStartRef.current.winX + deltaX);
@@ -69,34 +95,50 @@ export const Window: React.FC<WindowProps> = ({
         onMove(newX, newY);
       }
 
-      if (isResizing) {
+      if (isResizing && !isMobile) {
         const deltaX = e.clientX - resizeStartRef.current.x;
         const deltaY = e.clientY - resizeStartRef.current.y;
-        const newW = Math.max(320, resizeStartRef.current.w + deltaX);
-        const newH = Math.max(240, resizeStartRef.current.h + deltaY);
+        const newW = Math.max(300, resizeStartRef.current.w + deltaX);
+        const newH = Math.max(220, resizeStartRef.current.h + deltaY);
         onResize(newW, newH);
       }
     };
 
-    const handleMouseUp = () => {
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isDragging && !isMobile) {
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - dragStartRef.current.x;
+        const deltaY = touch.clientY - dragStartRef.current.y;
+        const newX = Math.max(0, dragStartRef.current.winX + deltaX);
+        const newY = Math.max(0, dragStartRef.current.winY + deltaY);
+        onMove(newX, newY);
+      }
+    };
+
+    const handleEnd = () => {
       if (isDragging) setIsDragging(false);
       if (isResizing) setIsResizing(false);
     };
 
     if (isDragging || isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleEnd);
     }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleEnd);
     };
-  }, [isDragging, isResizing, onMove, onResize]);
+  }, [isDragging, isResizing, isMobile, onMove, onResize]);
 
   if (win.isMinimized) return null;
 
-  const style: React.CSSProperties = win.isMaximized
+  // On Mobile: Force full viewport responsive window
+  const style: React.CSSProperties = (win.isMaximized || isMobile)
     ? {
         top: 0,
         left: 0,
@@ -116,14 +158,16 @@ export const Window: React.FC<WindowProps> = ({
     <div
       ref={windowRef}
       onMouseDown={onFocus}
+      onTouchStart={onFocus}
       style={style}
-      className={`fixed win-outset flex flex-col shadow-2xl transition-all duration-75 ${
+      className={`fixed win-outset flex flex-col shadow-2xl transition-all duration-75 max-w-full ${
         win.isFocused ? 'ring-1 ring-black/20' : ''
       }`}
     >
       {/* Title Bar */}
       <div
         onMouseDown={handleTitleMouseDown}
+        onTouchStart={handleTitleTouchStart}
         onDoubleClick={onMaximize}
         className={`win-titlebar ${win.isFocused ? '' : 'inactive'}`}
       >
@@ -139,23 +183,25 @@ export const Window: React.FC<WindowProps> = ({
               sound.playClick();
               onMinimize();
             }}
-            className="win-btn w-5 h-5 flex items-center justify-center text-[10px]"
+            className="win-btn w-6 h-6 md:w-5 md:h-5 flex items-center justify-center text-[10px]"
             title="Minimize"
           >
             <Minus className="w-3 h-3" />
           </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              sound.playClick();
-              onMaximize();
-            }}
-            className="win-btn w-5 h-5 flex items-center justify-center text-[10px]"
-            title={win.isMaximized ? 'Restore' : 'Maximize'}
-          >
-            {win.isMaximized ? <Copy className="w-3 h-3" /> : <Square className="w-3 h-3" />}
-          </button>
+          {!isMobile && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                sound.playClick();
+                onMaximize();
+              }}
+              className="win-btn w-5 h-5 flex items-center justify-center text-[10px]"
+              title={win.isMaximized ? 'Restore' : 'Maximize'}
+            >
+              {win.isMaximized ? <Copy className="w-3 h-3" /> : <Square className="w-3 h-3" />}
+            </button>
+          )}
 
           <button
             onClick={(e) => {
@@ -163,10 +209,10 @@ export const Window: React.FC<WindowProps> = ({
               sound.playClick();
               onClose();
             }}
-            className="win-btn w-5 h-5 bg-[#c0c0c0] text-black font-bold hover:bg-red-600 hover:text-white flex items-center justify-center text-[10px]"
+            className="win-btn w-6 h-6 md:w-5 md:h-5 bg-[#c0c0c0] text-black font-bold hover:bg-red-600 hover:text-white flex items-center justify-center text-[10px]"
             title="Close"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4 md:w-3.5 md:h-3.5" />
           </button>
         </div>
       </div>
@@ -176,8 +222,8 @@ export const Window: React.FC<WindowProps> = ({
         {children}
       </div>
 
-      {/* Resize Handle (Bottom-Right Corner) */}
-      {!win.isMaximized && (
+      {/* Resize Handle (Bottom-Right Corner for Desktop) */}
+      {!win.isMaximized && !isMobile && (
         <div
           onMouseDown={handleResizeMouseDown}
           className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize flex items-end justify-end p-0.5"
