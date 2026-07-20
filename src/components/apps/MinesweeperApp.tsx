@@ -19,6 +19,7 @@ export const MinesweeperApp: React.FC = () => {
   const [flagsCount, setFlagsCount] = useState<number>(MINE_COUNT);
   const [timer, setTimer] = useState<number>(0);
   const [face, setFace] = useState<string>('😊');
+  const [isFlagMode, setIsFlagMode] = useState<boolean>(false);
 
   const initGame = () => {
     sound.playClick();
@@ -27,7 +28,6 @@ export const MinesweeperApp: React.FC = () => {
     setTimer(0);
     setFace('😊');
 
-    // Create empty grid
     let newGrid: Cell[][] = Array.from({ length: GRID_SIZE }, (_, y) =>
       Array.from({ length: GRID_SIZE }, (_, x) => ({
         x,
@@ -39,7 +39,6 @@ export const MinesweeperApp: React.FC = () => {
       }))
     );
 
-    // Place mines randomly
     let minesPlaced = 0;
     while (minesPlaced < MINE_COUNT) {
       const rx = Math.floor(Math.random() * GRID_SIZE);
@@ -50,7 +49,6 @@ export const MinesweeperApp: React.FC = () => {
       }
     }
 
-    // Calculate neighbor counts
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
         if (newGrid[r][c].isMine) continue;
@@ -83,6 +81,33 @@ export const MinesweeperApp: React.FC = () => {
     return () => clearInterval(t);
   }, [gameState]);
 
+  const handleCellClick = (r: number, c: number) => {
+    if (gameState !== 'playing') return;
+
+    if (isFlagMode) {
+      toggleFlag(r, c);
+    } else {
+      revealCell(r, c);
+    }
+  };
+
+  const toggleFlag = (r: number, c: number) => {
+    const cell = grid[r][c];
+    if (cell.isOpen) return;
+
+    sound.playClick();
+    const updated = grid.map(row => row.map(item => {
+      if (item.x === c && item.y === r) {
+        const nextFlag = !item.isFlagged;
+        setFlagsCount(prev => nextFlag ? prev - 1 : prev + 1);
+        return { ...item, isFlagged: nextFlag };
+      }
+      return item;
+    }));
+
+    setGrid(updated);
+  };
+
   const revealCell = (r: number, c: number) => {
     if (gameState !== 'playing') return;
     const cell = grid[r][c];
@@ -94,7 +119,6 @@ export const MinesweeperApp: React.FC = () => {
       sound.playError();
       setGameState('lost');
       setFace('😵');
-      // Reveal all mines
       setGrid(prev => prev.map(row => row.map(cell => cell.isMine ? { ...cell, isOpen: true } : cell)));
       return;
     }
@@ -117,7 +141,6 @@ export const MinesweeperApp: React.FC = () => {
 
     floodFill(r, c);
 
-    // Check Win
     let openCount = 0;
     for (let i = 0; i < GRID_SIZE; i++) {
       for (let j = 0; j < GRID_SIZE; j++) {
@@ -136,21 +159,7 @@ export const MinesweeperApp: React.FC = () => {
 
   const handleRightClick = (e: React.MouseEvent, r: number, c: number) => {
     e.preventDefault();
-    if (gameState !== 'playing') return;
-    const cell = grid[r][c];
-    if (cell.isOpen) return;
-
-    sound.playClick();
-    const updated = grid.map(row => row.map(item => {
-      if (item.x === c && item.y === r) {
-        const nextFlag = !item.isFlagged;
-        setFlagsCount(prev => nextFlag ? prev - 1 : prev + 1);
-        return { ...item, isFlagged: nextFlag };
-      }
-      return item;
-    }));
-
-    setGrid(updated);
+    toggleFlag(r, c);
   };
 
   const getNumberColor = (num: number) => {
@@ -164,11 +173,11 @@ export const MinesweeperApp: React.FC = () => {
   };
 
   return (
-    <div className="p-3 bg-[#c0c0c0] font-sans text-xs select-none space-y-3 w-max mx-auto my-auto shadow-xl border-2 border-white">
+    <div className="p-3 bg-[#c0c0c0] font-sans text-xs select-none space-y-3 max-w-full overflow-x-auto mx-auto my-auto shadow-xl border-2 border-white flex flex-col items-center">
       {/* Header Counter Bar */}
-      <div className="win-inset p-2 bg-[#c0c0c0] flex items-center justify-between">
+      <div className="win-inset p-2 bg-[#c0c0c0] flex items-center justify-between w-full max-w-[280px]">
         {/* Mine counter */}
-        <div className="win-inset px-2 py-1 bg-black text-red-500 font-mono font-bold text-lg w-12 text-center">
+        <div className="win-inset px-2 py-1 bg-black text-red-500 font-mono font-bold text-base sm:text-lg w-12 text-center">
           {String(flagsCount).padStart(3, '0')}
         </div>
 
@@ -181,20 +190,33 @@ export const MinesweeperApp: React.FC = () => {
         </button>
 
         {/* Timer */}
-        <div className="win-inset px-2 py-1 bg-black text-red-500 font-mono font-bold text-lg w-12 text-center">
+        <div className="win-inset px-2 py-1 bg-black text-red-500 font-mono font-bold text-base sm:text-lg w-12 text-center">
           {String(Math.min(999, timer)).padStart(3, '0')}
         </div>
       </div>
 
+      {/* Mobile Touch Mode Toggle Button */}
+      <div className="flex justify-center w-full max-w-[280px]">
+        <button
+          onClick={() => setIsFlagMode(!isFlagMode)}
+          className={`win-btn w-full py-1 text-xs font-bold flex items-center justify-center gap-1 ${
+            isFlagMode ? 'win-btn-pressed bg-amber-400 text-black' : 'bg-[#c0c0c0]'
+          }`}
+        >
+          <span>Touch Mode:</span>
+          <span>{isFlagMode ? '🚩 Flagging Active' : '🔍 Digging Active'}</span>
+        </button>
+      </div>
+
       {/* Grid */}
-      <div className="win-inset p-1 bg-gray-400 grid grid-cols-9 gap-0.5">
+      <div className="win-inset p-1 bg-gray-400 grid grid-cols-9 gap-0.5 max-w-full overflow-x-auto">
         {grid.map((row, r) =>
           row.map((cell, c) => (
             <button
               key={`${r}-${c}`}
-              onClick={() => revealCell(r, c)}
+              onClick={() => handleCellClick(r, c)}
               onContextMenu={(e) => handleRightClick(e, r, c)}
-              className={`w-7 h-7 flex items-center justify-center font-mono font-bold text-xs select-none ${
+              className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center font-mono font-bold text-xs select-none ${
                 cell.isOpen
                   ? 'win-inset bg-gray-200'
                   : 'win-btn bg-[#c0c0c0]'

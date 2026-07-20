@@ -12,9 +12,9 @@ export const ProjectsApp: React.FC = () => {
   return (
     <div className="flex flex-col h-full text-xs font-sans select-text">
       {/* Explorer Address Bar & Toolbar */}
-      <div className="win-outset p-1 bg-[#c0c0c0] dark:bg-[#2a2a2a] flex items-center justify-between gap-2 border-b border-gray-400">
-        <div className="flex items-center gap-2 flex-1">
-          <span className="font-bold text-gray-700 dark:text-gray-300">Address:</span>
+      <div className="win-outset p-1 bg-[#c0c0c0] dark:bg-[#2a2a2a] flex flex-wrap items-center justify-between gap-1.5 border-b border-gray-400">
+        <div className="flex items-center gap-1.5 flex-1 min-w-[200px]">
+          <span className="font-bold text-gray-700 dark:text-gray-300 text-[11px]">Address:</span>
           <div className="win-inset flex-1 px-2 py-0.5 bg-white dark:bg-black font-mono text-[11px] truncate">
             C:\Users\Suman\Projects\{selectedProject ? selectedProject.folderName : ''}
           </div>
@@ -23,14 +23,14 @@ export const ProjectsApp: React.FC = () => {
         <div className="flex items-center gap-1">
           <button
             onClick={() => { sound.playClick(); setViewMode('icons'); }}
-            className={`win-btn p-1 ${viewMode === 'icons' ? 'win-btn-pressed' : ''}`}
+            className={`win-btn p-1.5 ${viewMode === 'icons' ? 'win-btn-pressed' : ''}`}
             title="Large Icons View"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => { sound.playClick(); setViewMode('list'); }}
-            className={`win-btn p-1 ${viewMode === 'list' ? 'win-btn-pressed' : ''}`}
+            className={`win-btn p-1.5 ${viewMode === 'list' ? 'win-btn-pressed' : ''}`}
             title="Details List View"
           >
             <List className="w-3.5 h-3.5" />
@@ -39,9 +39,9 @@ export const ProjectsApp: React.FC = () => {
       </div>
 
       <div className="flex-1 flex min-h-0">
-        {/* Left Folder Tree Sidebar */}
-        <div className="w-48 win-inset bg-gray-50 dark:bg-[#181818] p-2 border-r overflow-y-auto hidden sm:block">
-          <div className="font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1">
+        {/* Left Folder Tree Sidebar (Desktop / Tablet) */}
+        <div className="w-44 lg:w-48 win-inset bg-gray-50 dark:bg-[#181818] p-2 border-r overflow-y-auto hidden sm:block flex-shrink-0">
+          <div className="font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1 text-xs">
             <Folder className="w-4 h-4 text-amber-500" /> All Folders
           </div>
           <div className="space-y-1 pl-2 border-l border-gray-300">
@@ -52,7 +52,7 @@ export const ProjectsApp: React.FC = () => {
                   sound.playClick();
                   setSelectedProject(proj);
                 }}
-                className={`w-full text-left px-2 py-1 rounded flex items-center gap-1.5 truncate ${
+                className={`w-full text-left px-2 py-1 rounded flex items-center gap-1.5 truncate text-xs ${
                   selectedProject?.id === proj.id ? 'bg-blue-600 text-white font-bold' : 'hover:bg-gray-200 dark:hover:bg-neutral-800'
                 }`}
               >
@@ -64,11 +64,11 @@ export const ProjectsApp: React.FC = () => {
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1 flex flex-col min-h-0 bg-white dark:bg-[#1e1e1e]">
+        <div className="flex-1 flex flex-col min-h-0 bg-white dark:bg-[#1e1e1e] overflow-hidden">
           {/* Top Folder Files Grid */}
-          <div className="p-3 border-b border-gray-300 overflow-y-auto max-h-44">
+          <div className="p-2 sm:p-3 border-b border-gray-300 overflow-y-auto max-h-48 flex-shrink-0">
             {viewMode === 'icons' ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {PROJECTS.map((proj) => (
                   <div
                     key={proj.id}
@@ -82,42 +82,42 @@ export const ProjectsApp: React.FC = () => {
                         : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50 dark:hover:bg-neutral-800'
                     }`}
                   >
-                    <div className="text-3xl mb-1">📁</div>
-                    <div className="font-bold truncate max-w-full text-xs">{proj.title}</div>
-                    <div className="text-[10px] text-gray-500 font-mono">{proj.category}</div>
+                    <div className="text-2xl sm:text-3xl mb-1">📁</div>
+                    <div className="font-bold truncate max-w-full text-[11px] sm:text-xs">{proj.title}</div>
+                    <div className="text-[10px] text-gray-500 font-mono truncate max-w-full">{proj.category}</div>
                   </div>
                 ))}
               </div>
             ) : (
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-100 dark:bg-neutral-800 text-gray-600 border-b">
-                    <th className="p-1">Name</th>
-                    <th className="p-1">Category</th>
-                    <th className="p-1">Tech Stack</th>
-                    <th className="p-1">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {PROJECTS.map((proj) => (
-                    <tr
-                      key={proj.id}
-                      onClick={() => {
-                        sound.playClick();
-                        setSelectedProject(proj);
-                      }}
-                      className={`cursor-pointer border-b ${
-                        selectedProject?.id === proj.id ? 'bg-blue-600 text-white font-bold' : 'hover:bg-gray-100 dark:hover:bg-neutral-800'
-                      }`}
-                    >
-                      <td className="p-1 flex items-center gap-1">📁 {proj.title}</td>
-                      <td className="p-1">{proj.category}</td>
-                      <td className="p-1 truncate max-w-xs">{proj.techStack.join(', ')}</td>
-                      <td className="p-1">{proj.date}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[400px]">
+                  <thead>
+                    <tr className="bg-gray-100 dark:bg-neutral-800 text-gray-600 border-b text-[11px]">
+                      <th className="p-1">Name</th>
+                      <th className="p-1">Category</th>
+                      <th className="p-1">Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {PROJECTS.map((proj) => (
+                      <tr
+                        key={proj.id}
+                        onClick={() => {
+                          sound.playClick();
+                          setSelectedProject(proj);
+                        }}
+                        className={`cursor-pointer border-b text-[11px] ${
+                          selectedProject?.id === proj.id ? 'bg-blue-600 text-white font-bold' : 'hover:bg-gray-100 dark:hover:bg-neutral-800'
+                        }`}
+                      >
+                        <td className="p-1 flex items-center gap-1">📁 {proj.title}</td>
+                        <td className="p-1">{proj.category}</td>
+                        <td className="p-1">{proj.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
 
@@ -125,43 +125,43 @@ export const ProjectsApp: React.FC = () => {
           {selectedProject && (
             <div className="flex-1 p-3 overflow-y-auto space-y-3 bg-gray-50 dark:bg-[#181818]">
               {/* Tab Bar */}
-              <div className="flex border-b border-gray-400 gap-2">
+              <div className="flex border-b border-gray-400 gap-1 overflow-x-auto">
                 <button
                   onClick={() => setActiveTab('overview')}
-                  className={`px-3 py-1 font-bold ${activeTab === 'overview' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+                  className={`px-3 py-1 font-bold whitespace-nowrap text-xs ${activeTab === 'overview' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
                 >
                   Overview & Tech Stack
                 </button>
                 <button
                   onClick={() => setActiveTab('features')}
-                  className={`px-3 py-1 font-bold ${activeTab === 'features' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+                  className={`px-3 py-1 font-bold whitespace-nowrap text-xs ${activeTab === 'features' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
                 >
                   Key Features
                 </button>
                 <button
                   onClick={() => setActiveTab('demo')}
-                  className={`px-3 py-1 font-bold ${activeTab === 'demo' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+                  className={`px-3 py-1 font-bold whitespace-nowrap text-xs ${activeTab === 'demo' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
                 >
-                  Interactive Demo Preview
+                  Terminal Demo
                 </button>
               </div>
 
               {activeTab === 'overview' && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between border-b pb-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-2 gap-2">
                     <div>
-                      <h3 className="text-base font-bold text-blue-900 dark:text-blue-400">{selectedProject.title}</h3>
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-mono text-[10px]">
+                      <h3 className="text-sm sm:text-base font-bold text-blue-900 dark:text-blue-400">{selectedProject.title}</h3>
+                      <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-200 rounded font-mono text-[10px]">
                         Category: {selectedProject.category}
                       </span>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <a
                         href={selectedProject.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="win-btn px-3 py-1 bg-[#c0c0c0] font-bold flex items-center gap-1"
+                        className="win-btn px-3 py-1 bg-[#c0c0c0] font-bold flex items-center gap-1 text-xs"
                       >
                         <Code className="w-3.5 h-3.5" /> Source Code
                       </a>
@@ -169,7 +169,7 @@ export const ProjectsApp: React.FC = () => {
                         href={selectedProject.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="win-btn px-3 py-1 bg-[#c0c0c0] font-bold text-blue-900 flex items-center gap-1"
+                        className="win-btn px-3 py-1 bg-[#c0c0c0] font-bold text-blue-900 flex items-center gap-1 text-xs"
                       >
                         <ExternalLink className="w-3.5 h-3.5" /> Live Demo ↗
                       </a>
@@ -181,16 +181,16 @@ export const ProjectsApp: React.FC = () => {
                   </p>
 
                   {selectedProject.metrics && (
-                    <div className="win-inset p-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold border-l-4 border-emerald-600">
+                    <div className="win-inset p-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold border-l-4 border-emerald-600 text-xs">
                       ⚡ Performance Impact: {selectedProject.metrics}
                     </div>
                   )}
 
                   <div>
-                    <h4 className="font-bold mb-1 text-gray-800 dark:text-gray-200">Technologies Used:</h4>
+                    <h4 className="font-bold mb-1 text-gray-800 dark:text-gray-200 text-xs">Technologies Used:</h4>
                     <div className="flex gap-1.5 flex-wrap">
                       {selectedProject.techStack.map(tech => (
-                        <span key={tech} className="px-2 py-0.5 bg-gray-200 dark:bg-neutral-800 rounded text-xs border border-gray-300 font-mono">
+                        <span key={tech} className="px-2 py-0.5 bg-gray-200 dark:bg-neutral-800 rounded text-[11px] border border-gray-300 font-mono">
                           {tech}
                         </span>
                       ))}
@@ -201,10 +201,10 @@ export const ProjectsApp: React.FC = () => {
 
               {activeTab === 'features' && (
                 <div className="space-y-2">
-                  <h4 className="font-bold text-base border-b pb-1">Core Functionality Checklist</h4>
+                  <h4 className="font-bold text-sm border-b pb-1">Core Functionality Checklist</h4>
                   <ul className="space-y-2">
                     {selectedProject.features.map((feat, i) => (
-                      <li key={i} className="flex items-start gap-2 bg-white dark:bg-[#252525] p-2 rounded border">
+                      <li key={i} className="flex items-start gap-2 bg-white dark:bg-[#252525] p-2 rounded border text-xs">
                         <span className="text-green-600 font-bold">✓</span>
                         <span>{feat}</span>
                       </li>
@@ -214,8 +214,8 @@ export const ProjectsApp: React.FC = () => {
               )}
 
               {activeTab === 'demo' && (
-                <div className="win-inset p-4 bg-slate-900 text-green-400 font-mono space-y-2 rounded">
-                  <div className="text-xs text-gray-400 border-b border-gray-700 pb-1">
+                <div className="win-inset p-3 sm:p-4 bg-slate-900 text-green-400 font-mono space-y-2 rounded text-xs">
+                  <div className="text-[10px] text-gray-400 border-b border-gray-700 pb-1">
                     Demo Terminal Simulator - Running {selectedProject.folderName}...
                   </div>
                   <div>$ npm run start</div>
@@ -223,16 +223,16 @@ export const ProjectsApp: React.FC = () => {
                   <div>[DATABASE] MongoDB Connected successfully!</div>
                   <div>[API] Executing {selectedProject.title} workflow...</div>
                   <div className="p-3 bg-black/60 rounded border border-green-500/30 text-white font-sans mt-3">
-                    <h4 className="font-bold text-yellow-400 mb-1">{selectedProject.title} Output Preview</h4>
+                    <h4 className="font-bold text-yellow-400 mb-1 text-xs">{selectedProject.title} Output Preview</h4>
                     <p className="text-xs text-gray-300">{selectedProject.summary}</p>
                     <div className="mt-3">
                       <a
                         href={selectedProject.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded"
+                        className="inline-block px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded text-xs"
                       >
-                        Launch Interactive Full Application ↗
+                        Launch Full App ↗
                       </a>
                     </div>
                   </div>

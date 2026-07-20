@@ -22,30 +22,30 @@ export const SkillsApp: React.FC = () => {
   return (
     <div className="p-3 font-sans text-xs md:text-sm select-text space-y-3">
       {/* Control Panel Header */}
-      <div className="win-outset p-3 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 text-white flex items-center justify-between shadow">
+      <div className="win-outset p-3 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow">
         <div className="flex items-center gap-3">
           <div className="text-3xl">💻</div>
           <div>
-            <h2 className="text-base font-bold">Control Panel - Installed Tech Stack Programs</h2>
+            <h2 className="text-sm sm:text-base font-bold">Control Panel - Installed Tech Stack Programs</h2>
             <p className="text-[11px] text-blue-200">System Software Specifications & Verified Developer Tools</p>
           </div>
         </div>
 
         {/* Search Input */}
-        <div className="relative">
+        <div className="relative w-full sm:w-48">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search skill or tool..."
-            className="win-inset px-3 py-1 pl-8 text-black bg-white rounded font-mono text-xs w-48 outline-none"
+            className="win-inset w-full px-3 py-1 pl-8 text-black bg-white rounded font-mono text-xs outline-none"
           />
           <Search className="w-3.5 h-3.5 text-gray-500 absolute left-2 top-2" />
         </div>
       </div>
 
       {/* Category Filter Pills */}
-      <div className="flex gap-1 overflow-x-auto pb-1">
+      <div className="flex gap-1 overflow-x-auto pb-1 no-scrollbar">
         {categories.map(cat => (
           <button
             key={cat}
@@ -66,16 +66,16 @@ export const SkillsApp: React.FC = () => {
       <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
         {filteredCategories.map(group => (
           <div key={group.category} className="win-inset p-3 bg-white dark:bg-[#1e1e1e] space-y-2">
-            <h3 className="font-bold text-blue-900 dark:text-blue-400 border-b pb-1 flex items-center gap-2 text-sm">
+            <h3 className="font-bold text-blue-900 dark:text-blue-400 border-b pb-1 flex items-center gap-2 text-xs sm:text-sm">
               <Wrench className="w-4 h-4 text-amber-600" /> {group.category}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
               {group.skills.map(skill => (
                 <div key={skill.name} className="p-2 border rounded bg-gray-50 dark:bg-[#252525] space-y-1 hover:border-blue-400 transition-colors">
-                  <div className="flex justify-between items-center font-bold">
+                  <div className="flex justify-between items-center font-bold text-xs">
                     <span className="flex items-center gap-1">
-                      <CheckCircle className="w-3.5 h-3.5 text-green-600" />
+                      <CheckCircle className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
                       {skill.name}
                     </span>
                     <span className="text-[10px] px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded font-mono">
