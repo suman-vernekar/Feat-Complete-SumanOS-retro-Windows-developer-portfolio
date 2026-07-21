@@ -167,6 +167,31 @@ export const PROJECTS: Project[] = [
     challenges: 'Optimizing high-resolution interior image rendering without layout shifts.',
     solutions: 'Used explicit aspect ratio placeholders and progressive WebP image loading.',
     futureImprovements: ['Add 3D room planner canvas simulator', 'User comment section with Firebase auth']
+  },
+  {
+    id: 'sumanos-portfolio',
+    title: 'SumanOS - Retro Windows Developer Portfolio',
+    category: 'React 19, Vite, Tailwind CSS v4, TypeScript',
+    summary: 'A full interactive retro Windows operating system portfolio featuring multi-profile logon, file explorer, live APIs, games arcade, and Web Audio API synthesis.',
+    description: 'Engineered an interactive Windows-inspired Operating System portfolio featuring a draggable window manager, multi-user logon, functional filesystem, retro arcade suite (Minesweeper, Snake, Tic-Tac-Toe), live GitHub/LeetCode API dashboard, MS-DOS terminal, and Web Audio synthesis.',
+    techStack: ['React.js (v19)', 'Vite (v8)', 'Tailwind CSS (v4)', 'TypeScript', 'Web Audio API', 'Framer Motion'],
+    metrics: 'Integrated 19+ interactive desktop apps, live GitHub REST API, and 100% mobile touch scaling',
+    features: [
+      'Built a full multi-user logon experience with passcode security and Lock Screen.',
+      'Developed a functional File Explorer supporting breadcrumb navigation and path copying.',
+      'Integrated real-time live GitHub REST API and LeetCode problem solving metrics.',
+      'Built an MS-DOS Command Prompt with custom commands and AI query responses.',
+      'Implemented Web Audio API retro sound synthesis for authentic OS click/boot sounds.'
+    ],
+    githubUrl: 'https://github.com/suman-vernekar/Feat-Complete-SumanOS-retro-Windows-developer-portfolio',
+    liveUrl: 'https://github.com/suman-vernekar/Feat-Complete-SumanOS-retro-Windows-developer-portfolio',
+    folderName: 'SumanOS_Portfolio',
+    featured: true,
+    date: '2026',
+    architecture: 'Component-based React 19 architecture with state-driven window manager, Context API, and Web Audio API synthesizer.',
+    challenges: 'Achieving pixel-perfect Win95/Win98 retro styling while providing 60 FPS performance and 100% mobile touchscreen responsiveness.',
+    solutions: 'Custom Tailwind v4 design tokens, touch event handlers, auto-scaling mobile viewports, and CSS hardware acceleration.',
+    futureImprovements: ['Add WebSockets multi-player arcade mode', 'Add local Storage database file system export']
   }
 ];
 
