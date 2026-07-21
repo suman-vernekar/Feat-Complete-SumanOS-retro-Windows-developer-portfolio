@@ -1,13 +1,67 @@
-import React, { useState } from 'react';
-import { PROJECTS } from '../../data/portfolioData';
+import React, { useState, useEffect } from 'react';
+import { PROJECTS, PERSONAL_INFO } from '../../data/portfolioData';
 import type { Project } from '../../data/portfolioData';
-import { Folder, ExternalLink, Code, LayoutGrid, List } from 'lucide-react';
+import { Folder, ExternalLink, Code, LayoutGrid, List, RefreshCw } from 'lucide-react';
 import { sound } from '../../utils/audio';
 
 export const ProjectsApp: React.FC = () => {
+  const [allProjects, setAllProjects] = useState<Project[]>(PROJECTS);
   const [selectedProject, setSelectedProject] = useState<Project | null>(PROJECTS[0]);
   const [viewMode, setViewMode] = useState<'icons' | 'list'>('icons');
   const [activeTab, setActiveTab] = useState<'overview' | 'features' | 'demo'>('overview');
+  const [isLoadingGh, setIsLoadingGh] = useState(false);
+
+  const fetchGithubRepos = async () => {
+    setIsLoadingGh(true);
+    try {
+      const res = await fetch(`https://api.github.com/users/${PERSONAL_INFO.githubUsername}/repos?sort=updated&per_page=100`);
+      if (res.ok) {
+        const ghRepos = await res.json();
+        
+        // Merge featured projects with live GitHub repos
+        const merged: Project[] = [...PROJECTS];
+
+        ghRepos.forEach((repo: any) => {
+          const exists = merged.some(p => p.githubUrl.toLowerCase().includes(repo.name.toLowerCase()) || p.title.toLowerCase().includes(repo.name.toLowerCase()));
+          if (!exists && !repo.fork) {
+            merged.push({
+              id: `gh-${repo.id}`,
+              title: repo.name.replace(/-/g, ' ').replace(/_/g, ' '),
+              category: repo.language ? `${repo.language} GitHub Repository` : 'GitHub Repository',
+              summary: repo.description || `Public GitHub repository ${repo.name} by ${PERSONAL_INFO.name}.`,
+              description: repo.description || `Public GitHub repository ${repo.name} created by Suman Vernekar. Includes source code, commit history, and technical documentation.`,
+              techStack: [repo.language || 'JavaScript', 'Git', 'GitHub'],
+              metrics: `★ ${repo.stargazers_count} Stars • 🍴 ${repo.forks_count} Forks`,
+              features: [
+                `Official GitHub Repository: ${repo.full_name}`,
+                `Default Branch: ${repo.default_branch}`,
+                `Latest Push: ${new Date(repo.pushed_at).toLocaleDateString()}`
+              ],
+              githubUrl: repo.html_url,
+              liveUrl: repo.homepage || repo.html_url,
+              folderName: repo.name,
+              featured: false,
+              date: new Date(repo.created_at).getFullYear().toString(),
+              architecture: 'Hosted on GitHub Public Cloud Repository.',
+              challenges: 'Open source contribution and code optimization.',
+              solutions: 'Modular code structure and Git version control.',
+              futureImprovements: ['Continuous Integration / CD Deployment']
+            });
+          }
+        });
+
+        setAllProjects(merged);
+      }
+    } catch {
+      // Ignore network errors gracefully
+    } finally {
+      setIsLoadingGh(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGithubRepos();
+  }, []);
 
   return (
     <div className="flex flex-col h-full text-xs font-sans select-text">
@@ -15,12 +69,25 @@ export const ProjectsApp: React.FC = () => {
       <div className="win-outset p-1 bg-[#c0c0c0] dark:bg-[#2a2a2a] flex flex-wrap items-center justify-between gap-1.5 border-b border-gray-400">
         <div className="flex items-center gap-1.5 flex-1 min-w-[200px]">
           <span className="font-bold text-gray-700 dark:text-gray-300 text-[11px]">Address:</span>
-          <div className="win-inset flex-1 px-2 py-0.5 bg-white dark:bg-black font-mono text-[11px] truncate">
-            C:\Users\Suman\Projects\{selectedProject ? selectedProject.folderName : ''}
+          <div className="win-inset flex-1 px-2 py-0.5 bg-white dark:bg-black font-mono text-[11px] truncate flex items-center justify-between">
+            <span className="truncate">C:\Users\Suman\Projects\{selectedProject ? selectedProject.folderName : ''}</span>
+            <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold ml-2 hidden md:inline">
+              🐙 {allProjects.length} Repos Loaded
+            </span>
           </div>
         </div>
 
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => { sound.playClick(); fetchGithubRepos(); }}
+            disabled={isLoadingGh}
+            className="win-btn p-1.5 flex items-center gap-1 bg-[#c0c0c0]"
+            title="Sync GitHub Repositories"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoadingGh ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline font-bold text-[11px]">Sync GitHub</span>
+          </button>
+
           <button
             onClick={() => { sound.playClick(); setViewMode('icons'); }}
             className={`win-btn p-1.5 ${viewMode === 'icons' ? 'win-btn-pressed' : ''}`}
@@ -40,12 +107,17 @@ export const ProjectsApp: React.FC = () => {
 
       <div className="flex-1 flex min-h-0">
         {/* Left Folder Tree Sidebar (Desktop / Tablet) */}
-        <div className="w-44 lg:w-48 win-inset bg-gray-50 dark:bg-[#181818] p-2 border-r overflow-y-auto hidden sm:block flex-shrink-0">
-          <div className="font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1 text-xs">
-            <Folder className="w-4 h-4 text-amber-500" /> All Folders
+        <div className="w-48 lg:w-52 win-inset bg-gray-50 dark:bg-[#181818] p-2 border-r overflow-y-auto hidden sm:block flex-shrink-0">
+          <div className="font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1 text-xs justify-between">
+            <span className="flex items-center gap-1">
+              <Folder className="w-4 h-4 text-amber-500" /> GitHub Repos
+            </span>
+            <span className="text-[10px] bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1 rounded font-mono">
+              {allProjects.length}
+            </span>
           </div>
           <div className="space-y-1 pl-2 border-l border-gray-300">
-            {PROJECTS.map((proj) => (
+            {allProjects.map((proj) => (
               <button
                 key={proj.id}
                 onClick={() => {
@@ -69,7 +141,7 @@ export const ProjectsApp: React.FC = () => {
           <div className="p-2 sm:p-3 border-b border-gray-300 overflow-y-auto max-h-48 flex-shrink-0">
             {viewMode === 'icons' ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {PROJECTS.map((proj) => (
+                {allProjects.map((proj) => (
                   <div
                     key={proj.id}
                     onClick={() => {
@@ -93,13 +165,13 @@ export const ProjectsApp: React.FC = () => {
                 <table className="w-full text-left border-collapse min-w-[400px]">
                   <thead>
                     <tr className="bg-gray-100 dark:bg-neutral-800 text-gray-600 border-b text-[11px]">
-                      <th className="p-1">Name</th>
-                      <th className="p-1">Category</th>
-                      <th className="p-1">Date</th>
+                      <th className="p-1">Repository Name</th>
+                      <th className="p-1">Category / Language</th>
+                      <th className="p-1">Year</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {PROJECTS.map((proj) => (
+                    {allProjects.map((proj) => (
                       <tr
                         key={proj.id}
                         onClick={() => {
@@ -110,8 +182,8 @@ export const ProjectsApp: React.FC = () => {
                           selectedProject?.id === proj.id ? 'bg-blue-600 text-white font-bold' : 'hover:bg-gray-100 dark:hover:bg-neutral-800'
                         }`}
                       >
-                        <td className="p-1 flex items-center gap-1">📁 {proj.title}</td>
-                        <td className="p-1">{proj.category}</td>
+                        <td className="p-1 flex items-center gap-1 truncate max-w-[200px]">📁 {proj.title}</td>
+                        <td className="p-1 truncate max-w-[150px]">{proj.category}</td>
                         <td className="p-1">{proj.date}</td>
                       </tr>
                     ))}
@@ -171,7 +243,7 @@ export const ProjectsApp: React.FC = () => {
                         rel="noopener noreferrer"
                         className="win-btn px-3 py-1 bg-[#c0c0c0] font-bold text-blue-900 flex items-center gap-1 text-xs"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" /> Live Demo ↗
+                        <ExternalLink className="w-3.5 h-3.5" /> Live Link ↗
                       </a>
                     </div>
                   </div>
@@ -182,12 +254,12 @@ export const ProjectsApp: React.FC = () => {
 
                   {selectedProject.metrics && (
                     <div className="win-inset p-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold border-l-4 border-emerald-600 text-xs">
-                      ⚡ Performance Impact: {selectedProject.metrics}
+                      ⚡ Repository Metrics: {selectedProject.metrics}
                     </div>
                   )}
 
                   <div>
-                    <h4 className="font-bold mb-1 text-gray-800 dark:text-gray-200 text-xs">Technologies Used:</h4>
+                    <h4 className="font-bold mb-1 text-gray-800 dark:text-gray-200 text-xs">Technologies & Languages:</h4>
                     <div className="flex gap-1.5 flex-wrap">
                       {selectedProject.techStack.map(tech => (
                         <span key={tech} className="px-2 py-0.5 bg-gray-200 dark:bg-neutral-800 rounded text-[11px] border border-gray-300 font-mono">
@@ -218,21 +290,20 @@ export const ProjectsApp: React.FC = () => {
                   <div className="text-[10px] text-gray-400 border-b border-gray-700 pb-1">
                     Demo Terminal Simulator - Running {selectedProject.folderName}...
                   </div>
-                  <div>$ npm run start</div>
-                  <div>[SUCCESS] Server listening on http://localhost:5000</div>
-                  <div>[DATABASE] MongoDB Connected successfully!</div>
-                  <div>[API] Executing {selectedProject.title} workflow...</div>
+                  <div>$ git clone {selectedProject.githubUrl}</div>
+                  <div>[SUCCESS] Repository cloned successfully!</div>
+                  <div>[STATUS] Output generated for {selectedProject.title}</div>
                   <div className="p-3 bg-black/60 rounded border border-green-500/30 text-white font-sans mt-3">
                     <h4 className="font-bold text-yellow-400 mb-1 text-xs">{selectedProject.title} Output Preview</h4>
                     <p className="text-xs text-gray-300">{selectedProject.summary}</p>
                     <div className="mt-3">
                       <a
-                        href={selectedProject.liveUrl}
+                        href={selectedProject.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded text-xs"
                       >
-                        Launch Full App ↗
+                        Open GitHub Repository ↗
                       </a>
                     </div>
                   </div>
