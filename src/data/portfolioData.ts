@@ -259,13 +259,13 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
 
 export const CERTIFICATES: CertificateItem[] = [
   {
-    id: 'cert-mern',
-    title: 'Full-Stack MERN Development Masterclass',
-    issuer: 'JSpiders Training & Development Center',
-    date: '2026',
-    credentialId: 'JSP-MERN-2026-9812',
-    link: 'https://jspiders.com/verify/JSP-MERN-2026-9812',
-    tag: 'Full-Stack'
+    id: 'cert-qspiders-mern',
+    title: 'MERN Full Stack Internship Certificate',
+    issuer: 'QSpiders (A Unit of Test Yantra Software Solutions Pvt. Ltd.)',
+    date: '27/01/2026 – 27/05/2026',
+    credentialId: 'USN: 4HG22CS044 | CIN: U72200KA2007PTC044701 | Mentor: Mr. Laxman A H',
+    link: '/qspiders-certificate.pdf',
+    tag: 'MERN Full Stack'
   },
   {
     id: 'cert-dsa',
@@ -282,7 +282,7 @@ export const CERTIFICATES: CertificateItem[] = [
     issuer: 'AI & CV Academy',
     date: '2024',
     credentialId: 'CV-OCR-PY-2024-30',
-    link: 'https://github.com/suman-vernekar/medical-ocr-summarizer',
+    link: 'https://github.com/suman-vernekar/MedicaltranscriptionSummarizes',
     tag: 'AI / CV'
   }
 ];

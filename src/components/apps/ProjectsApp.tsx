@@ -61,6 +61,9 @@ export const ProjectsApp: React.FC = () => {
 
   useEffect(() => {
     fetchGithubRepos();
+    // Auto-sync every 30 seconds to detect newly created GitHub repositories instantly
+    const interval = setInterval(fetchGithubRepos, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
