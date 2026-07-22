@@ -36,7 +36,10 @@
     padding: 0;
     overflow: hidden;
     user-select: none;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'MS Sans Serif', Tahoma, Geneva, Arial, sans-serif;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: none;
+    font-smooth: never;
     background-color: var(--desktop-bg);
     color: var(--win-text);
   }
@@ -77,10 +80,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 2px 6px;
-  active: translate(1px, 1px);
+  font-weight: bold;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 11px;
+  padding: 3px 8px;
 }
 
 .win-btn:active, .win-btn-pressed {
@@ -89,19 +92,20 @@
   border-right: 2px solid var(--win-light);
   border-bottom: 2px solid var(--win-light);
   box-shadow: inset 1px 1px var(--win-shadow);
-  padding: 3px 5px 1px 7px;
+  padding: 4px 7px 2px 9px;
 }
 
 .win-titlebar {
   background: linear-gradient(90deg, var(--win-title-start), var(--win-title-end));
   color: var(--win-title-text);
   font-weight: bold;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
   padding: 3px 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: move;
-  font-size: 13px;
+  font-size: 11px;
   letter-spacing: 0.5px;
 }
 
@@ -138,38 +142,27 @@
   background-color: #d4d4d4;
 }
 
-::-webkit-scrollbar-button {
-  background-color: var(--win-face);
-  width: 16px;
-  height: 16px;
-  border-top: 2px solid var(--win-light);
-  border-left: 2px solid var(--win-light);
-  border-right: 2px solid var(--win-dark-shadow);
-  border-bottom: 2px solid var(--win-dark-shadow);
-}
-
-/* CRT Scanline Effect */
+/* CRT Scanline Screen Flicker Effect */
 .crt-overlay::before {
   content: " ";
   display: block;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-  z-index: 99999;
-  background-size: 100% 3px, 6px 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+  background-size: 100% 4px;
+  z-index: 999999;
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.45;
 }
 
-/* Scanline animation flicker */
 @keyframes flicker {
-  0% { opacity: 0.55; }
-  50% { opacity: 0.65; }
-  100% { opacity: 0.55; }
+  0% { opacity: 0.4; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0.4; }
 }
 
 .crt-overlay::before {
-  animation: flicker 0.15s infinite;
+  animation: flicker 0.18s infinite;
 }
 
 /* Matrix Background Canvas */
